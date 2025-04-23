@@ -1,0 +1,48 @@
+﻿@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.KontaktSide>
+
+@{
+	Layout = "Main.cshtml";
+}
+
+<section class="bg-gray-50 py-20 min-h-screen">
+	<div class="max-w-5xl mx-auto px-6">
+		<h1 class="text-4xl font-extrabold text-center text-gray-800 mb-6">@Model.Sidetitel</h1>
+		<div class="prose max-w-2xl mx-auto text-center text-gray-600 mb-12">
+			@Html.Raw(Model.Beskrivelse)
+		</div>
+		<div class="grid gap-12 lg:grid-cols-2 items-start bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
+			<!-- Left (kontakt info) -->
+			<div class="space-y-1">
+				<h2 class="text-2xl font-bold text-gray-800 mb-4">Kontaktinformation</h2>
+
+				<div class="flex items-start gap-4">
+					<div class="bg-sky-100 text-sky-600 p-2 rounded-full">
+					</div>
+					<p class="text-gray-700"><strong>Adresse:</strong> @Model.Adresse</p>
+				</div>
+
+				<div class="flex items-start gap-4">
+					<div class="bg-sky-100 text-sky-600 p-2 rounded-full">
+					</div>
+					<p class="text-gray-700"><strong>Telefon:</strong> @Model.Telefonnummer</p>
+				</div>
+
+				<div class="flex items-start gap-4">
+					<div class="bg-sky-100 text-sky-600 p-2 rounded-full">
+					</div>
+					<p class="text-gray-700"><strong>Email:</strong> @Model.Email</p>
+				</div>
+			</div>
+			<!-- Right (g map) -->
+			<div class="flex flex-col items-center justify-center h-[800px]">
+				<h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">Find os her</h2>
+				<div class="w-full h-full overflow-hidden rounded-xl shadow-md border border-gray-200">
+					<iframe src="@Model.Kort" class="w-full h-full rounded-xl" style="border:0;" allowfullscreen=""
+						loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+					</iframe>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>

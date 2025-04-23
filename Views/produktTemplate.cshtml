@@ -1,0 +1,94 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<Produktside>
+
+@{
+  Layout = "main.cshtml";
+  var produkter = Model.ChildrenOfType("produkt");
+}
+
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+</head>
+
+<section class="py-16 bg-gray-50 min-h-screen" x-data="{ open: false, activeProduct: {} }">
+  <div class="max-w-7xl mx-auto px-4">
+    <h1 class="text-4xl font-extrabold text-center text-gray-900 mb-12">@Model.Sidetitel</h1>
+
+    <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      @foreach (var produkt in produkter)
+      {
+        var navn = produkt.Value("produktNavn")?.ToString() ?? "";
+        var beskrivelse = produkt.Value("beskrivelse")?.ToString() ?? "";
+        var produktBeskrivelse = produkt.Value("produktBeskrivelse")?.ToString() ?? "";
+        var pris = produkt.Value("pris")?.ToString() ?? "";
+        var billede1 = produkt.Value<Umbraco.Cms.Core.Models.MediaWithCrops>("produktbillede")?.Url();
+        var billede2 = produkt.Value<Umbraco.Cms.Core.Models.MediaWithCrops>("produktbillede1")?.Url();
+
+        var billede1Str = !string.IsNullOrEmpty(billede1) ? billede1 : "";
+        var billede2Str = (!string.IsNullOrEmpty(billede2) && billede2 != billede1) ? billede2 : "";
+
+        <div class="transition transform hover:-translate-y-1 hover:shadow-xl duration-300" data-name="@navn"
+          data-description="@beskrivelse" data-produkt-beskrivelse="@produktBeskrivelse" data-price="@pris"
+          data-image1="@billede1Str" data-image2="@billede2Str" @@click="
+                                                open = true;
+                                                activeProduct = {
+                                                  name: $el.dataset.name,
+                                                  description: $el.dataset.description,
+                                                  price: $el.dataset.price,
+                                                  modaldescription: $el.dataset.produktBeskrivelse,
+                                                  images: [$el.dataset.image1, $el.dataset.image2].filter(src => src !== '')
+                                                }
+                                               ">
+          @await Html.PartialAsync("Partials/ProductCard", produkt)
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div x-show="open" x-transition class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center"
+    @@click.self="open = false">
+    <div class="relative bg-white rounded-2xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-y-auto p-6"
+      x-show="open" x-transition>
+      <button class="absolute top-4 right-4 text-3xl text-gray-400 hover:text-gray-700"
+        @@click="open = false">&times;</button>
+
+      <!-- Modal billeder  -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10" x-data="{ selectedIndex: 0 }">
+        <!-- Thumbnails -->
+        <div class="flex md:flex-col gap-4 overflow-x-auto md:overflow-y-auto max-h-96 pr-2">
+          <template x-for="(image, index) in activeProduct.images" :key="index">
+            <img :src="image" alt="thumbnail"
+              class="w-24 h-24 object-cover rounded-lg cursor-pointer border-2 transition duration-300 hover:grayscale hover:brightness-90"
+              :class="{ 'border-sky-500 ring-2 ring-sky-300': selectedIndex === index }"
+              @@click="selectedIndex = index" />
+          </template>
+        </div>
+
+        <!-- Large selected image (right) -->
+        <div class="col-span-2 flex justify-center items-center bg-gray-100 rounded-xl p-4 h-96">
+          <div x-data="{ zoom: false, x: 0, y: 0 }"
+            @@mousemove="zoom = true; const bounds = $event.target.getBoundingClientRect(); x = $event.offsetX / bounds.width * 100; y = $event.offsetY / bounds.height * 100"
+            @@mouseleave="zoom = false" class="relative w-full h-full overflow-hidden rounded-lg">
+            <img :src="activeProduct.images[selectedIndex]" alt="selected"
+              class="transition duration-300 object-contain w-full h-full"
+              :style="zoom ? `transform: scale(2); transform-origin: ${x}% ${y}%;` : 'transform: scale(1);'" />
+          </div>
+
+        </div>
+      </div>
+
+
+      <!-- Produkt info -->
+      <div class="grid gap-6 lg:grid-cols-3">
+        <div class="lg:col-span-2">
+          <h2 class="text-2xl font-bold text-gray-900 mb-2" x-text="activeProduct.name"></h2>
+          <p class="text-gray-700 whitespace-pre-line" x-html="activeProduct.modaldescription"></p>
+        </div>
+        <div class="text-right lg:text-left">
+          <p class="text-3xl font-semibold text-sky-600"><span x-text="activeProduct.price"></span> DKK</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

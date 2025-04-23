@@ -1,0 +1,19 @@
+@using Umbraco.Cms.Web.Common.PublishedModels
+@model Produkt
+
+<div
+    class="group bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-200 hover:border-sky-500 cursor-pointer">
+    <div class="relative overflow-hidden">
+        <img src="@Model.Produktbillede?.Url()" alt="@Model.Produktnavn"
+            class="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105" />
+    </div>
+    <div class="p-5">
+        <h2 class="text-lg font-bold text-gray-800 mb-1 group-hover:text-sky-600 transition">@Model.Produktnavn</h2>
+        <p class="text-gray-500 text-sm line-clamp-3 mb-3">@Html.Raw(Model.Beskrivelse)</p>
+        <div class="flex items-center justify-between">
+            <span class="text-sky-600 font-bold text-lg">@Model.Pris.ToString("0.00") DKK</span>
+            <span class="inline-block px-3 py-1 text-xs bg-sky-100 text-sky-700 rounded-full font-semibold">Se
+                mere</span>
+        </div>
+    </div>
+</div>
