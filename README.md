@@ -64,7 +64,11 @@ dotnet new install Umbraco.Templates::13.8.0 --force
 
 ---
 
-### 2. Frontend (Tailwind CSS)
+### 2. Frontend Setup – Tailwind CSS
+
+    npm init -y
+    npm install -D tailwindcss postcss autoprefixer
+    npx tailwindcss init -p
 
 - Responsive **grid layout** using Tailwind: `grid-cols-2`, `grid-cols-3`, `auto-fit`, `minmax(...)`
 - Product cards designed as **Partial Views** with image, name, price, and short description
